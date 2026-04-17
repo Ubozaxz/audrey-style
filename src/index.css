@@ -2,95 +2,64 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
-All colors MUST be HSL.
-*/
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Inter:wght@200;300;400;500;600&display=swap');
+
+/* Audrey Style — Hybrid elegant: cream base, charcoal text, deep forest green accent */
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 38 30% 96%;          /* soft cream */
+    --foreground: 220 18% 14%;         /* charcoal */
 
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --card-foreground: 220 18% 14%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover: 38 30% 98%;
+    --popover-foreground: 220 18% 14%;
 
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 158 42% 22%;            /* deep forest green */
+    --primary-foreground: 38 40% 97%;
+    --primary-glow: 158 50% 32%;
 
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 38 25% 92%;
+    --secondary-foreground: 220 18% 14%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 38 20% 90%;
+    --muted-foreground: 220 10% 42%;
 
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
+    --accent: 158 42% 22%;
+    --accent-foreground: 38 40% 97%;
 
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
+    --destructive: 0 60% 45%;
+    --destructive-foreground: 38 40% 97%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
+    --border: 30 15% 86%;
+    --input: 30 15% 86%;
+    --ring: 158 42% 22%;
 
-    --radius: 0.5rem;
+    --radius: 1rem;
 
-    --sidebar-background: 0 0% 98%;
+    /* Brand tokens */
+    --cream: 38 30% 96%;
+    --cream-deep: 38 25% 92%;
+    --charcoal: 220 18% 14%;
+    --charcoal-soft: 220 12% 28%;
+    --forest: 158 42% 22%;
+    --forest-bright: 152 60% 45%;
+    --terracotta: 18 55% 52%;
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+    --gradient-cream: linear-gradient(180deg, hsl(38 35% 98%), hsl(38 25% 92%));
+    --gradient-forest: linear-gradient(135deg, hsl(158 42% 22%), hsl(158 50% 32%));
+    --gradient-overlay: linear-gradient(180deg, transparent 0%, hsl(220 18% 14% / 0.55) 100%);
 
-    --sidebar-primary: 240 5.9% 10%;
+    --shadow-soft: 0 1px 2px hsl(220 18% 14% / 0.04), 0 8px 24px -12px hsl(220 18% 14% / 0.12);
+    --shadow-elegant: 0 24px 60px -24px hsl(158 42% 22% / 0.25);
+    --shadow-glass: 0 8px 32px hsl(220 18% 14% / 0.08);
 
-    --sidebar-primary-foreground: 0 0% 98%;
+    --glass-bg: hsl(38 30% 96% / 0.7);
+    --glass-border: hsl(220 18% 14% / 0.08);
 
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --transition-elegant: cubic-bezier(0.22, 1, 0.36, 1);
   }
 }
 
@@ -99,7 +68,45 @@ All colors MUST be HSL.
     @apply border-border;
   }
 
-  body {
-    @apply bg-background text-foreground;
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
+
+  body {
+    @apply bg-background text-foreground font-sans;
+    font-feature-settings: "ss01", "cv11";
+  }
+
+  h1, h2, h3, h4 {
+    @apply font-serif font-light tracking-tight;
+  }
+}
+
+@layer components {
+  .glass-nav {
+    background: var(--glass-bg);
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+    border-bottom: 1px solid var(--glass-border);
+  }
+
+  .glass-card {
+    background: hsl(38 30% 98% / 0.6);
+    backdrop-filter: blur(16px) saturate(130%);
+    border: 1px solid var(--glass-border);
+  }
+
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .hairline {
+    border-top: 1px solid hsl(var(--border));
+  }
+}
+
+@layer utilities {
+  .no-scrollbar::-webkit-scrollbar { display: none; }
+  .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
 }
