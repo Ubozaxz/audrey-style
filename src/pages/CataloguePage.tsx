@@ -33,18 +33,17 @@ export const CataloguePage = () => {
           transition={{ duration: 0.7 }}
           className="mb-10 md:mb-14 max-w-2xl"
         >
-          <p className="text-[10px] uppercase tracking-[0.3em] text-forest mb-3">
+          <p className="text-[10px] uppercase tracking-[0.3em] text-primary mb-3">
             Le Catalogue
           </p>
-          <h1 className="font-serif text-5xl md:text-6xl text-charcoal leading-tight mb-4">
+          <h1 className="font-serif text-5xl md:text-6xl text-foreground leading-tight mb-4">
             Toutes nos pièces.
           </h1>
-          <p className="text-base text-charcoal-soft leading-relaxed">
+          <p className="text-base text-muted-foreground leading-relaxed">
             Composez votre atelier personnel parmi nos collections.
           </p>
         </motion.div>
 
-        {/* Filter pills */}
         <div className="flex flex-wrap gap-2 mb-10 overflow-x-auto no-scrollbar -mx-5 px-5 sm:mx-0 sm:px-0">
           {filters.map((f) => (
             <button
@@ -52,8 +51,8 @@ export const CataloguePage = () => {
               onClick={() => { setFilter(f.id); setColorGroup(null); }}
               className={`flex-shrink-0 px-5 py-2.5 rounded-full text-xs uppercase tracking-[0.2em] transition-all ${
                 filter === f.id && !colorGroup
-                  ? "bg-charcoal text-cream"
-                  : "bg-transparent text-charcoal-soft border border-border hover:border-charcoal hover:text-charcoal"
+                  ? "bg-foreground text-background"
+                  : "bg-transparent text-muted-foreground border border-border hover:border-foreground hover:text-foreground"
               }`}
             >
               {f.label}
@@ -66,8 +65,8 @@ export const CataloguePage = () => {
               onClick={() => { setColorGroup(g); setFilter("color"); }}
               className={`flex-shrink-0 px-5 py-2.5 rounded-full text-xs uppercase tracking-[0.2em] transition-all ${
                 colorGroup === g
-                  ? "bg-forest text-primary-foreground"
-                  : "bg-transparent text-charcoal-soft border border-border hover:border-forest hover:text-forest"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-transparent text-muted-foreground border border-border hover:border-primary hover:text-primary"
               }`}
             >
               {g}
@@ -82,7 +81,7 @@ export const CataloguePage = () => {
         </div>
 
         {filtered.length === 0 && (
-          <p className="text-center text-charcoal-soft py-20">Aucune pièce dans cette sélection.</p>
+          <p className="text-center text-muted-foreground py-20">Aucune pièce dans cette sélection.</p>
         )}
       </div>
     </div>

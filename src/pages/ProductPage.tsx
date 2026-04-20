@@ -32,7 +32,7 @@ export const ProductPage = () => {
       <div className="container">
         <Link
           to="/catalogue"
-          className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-charcoal-soft hover:text-forest mb-8 transition-colors"
+          className="inline-flex items-center gap-2 text-xs uppercase tracking-[0.2em] text-muted-foreground hover:text-primary mb-8 transition-colors"
         >
           <ArrowLeft className="w-3.5 h-3.5" strokeWidth={1.5} />
           Retour au catalogue
@@ -43,7 +43,7 @@ export const ProductPage = () => {
             initial={{ opacity: 0, scale: 0.98 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.7 }}
-            className="aspect-[4/5] rounded-md overflow-hidden bg-cream-deep"
+            className="aspect-[4/5] rounded-md overflow-hidden bg-muted"
           >
             <img src={product.image} alt={product.name} className="w-full h-full object-cover" />
           </motion.div>
@@ -54,23 +54,23 @@ export const ProductPage = () => {
             transition={{ duration: 0.7, delay: 0.15 }}
             className="flex flex-col"
           >
-            <p className="text-[10px] uppercase tracking-[0.3em] text-forest mb-3">
+            <p className="text-[10px] uppercase tracking-[0.3em] text-primary mb-3">
               {product.collection}
             </p>
-            <h1 className="font-serif text-4xl md:text-5xl text-charcoal leading-tight mb-4">
+            <h1 className="font-serif text-4xl md:text-5xl text-foreground leading-tight mb-4">
               {product.name}
             </h1>
-            <p className="text-base text-charcoal-soft leading-relaxed mb-8">
+            <p className="text-base text-muted-foreground leading-relaxed mb-8">
               {product.description}
             </p>
 
             <div className="mb-6">
-              <p className="text-[10px] uppercase tracking-[0.25em] text-charcoal-soft mb-3">
+              <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-3">
                 Coloris
               </p>
               <div className="flex items-center gap-3">
                 <span
-                  className="w-10 h-10 rounded-full border-2 border-forest p-1"
+                  className="w-10 h-10 rounded-full border-2 border-primary p-1"
                   aria-hidden
                 >
                   <span
@@ -78,12 +78,12 @@ export const ProductPage = () => {
                     style={{ backgroundColor: product.colorHex }}
                   />
                 </span>
-                <span className="text-sm text-charcoal">{product.colorName}</span>
+                <span className="text-sm text-foreground">{product.colorName}</span>
               </div>
             </div>
 
             <div className="mb-10">
-              <p className="text-[10px] uppercase tracking-[0.25em] text-charcoal-soft mb-3">
+              <p className="text-[10px] uppercase tracking-[0.25em] text-muted-foreground mb-3">
                 Taille
               </p>
               <div className="flex gap-2">
@@ -93,8 +93,8 @@ export const ProductPage = () => {
                     onClick={() => setSize(s)}
                     className={`w-12 h-12 rounded-full text-sm font-medium transition-all ${
                       size === s
-                        ? "bg-forest text-primary-foreground"
-                        : "bg-cream-deep text-charcoal hover:bg-cream-deep/70"
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted text-foreground hover:bg-muted/70"
                     }`}
                   >
                     {s}
@@ -105,12 +105,12 @@ export const ProductPage = () => {
 
             <button
               onClick={handleAdd}
-              className="w-full bg-charcoal text-cream py-5 rounded-full text-xs uppercase tracking-[0.25em] hover:bg-forest transition-colors flex items-center justify-center gap-2 mb-3"
+              className="w-full bg-foreground text-background py-5 rounded-full text-xs uppercase tracking-[0.25em] hover:bg-primary hover:text-primary-foreground transition-colors flex items-center justify-center gap-2 mb-3"
             >
               <Check className="w-4 h-4" strokeWidth={1.5} />
               Ajouter à ma sélection
             </button>
-            <p className="text-[11px] text-center text-charcoal-soft">
+            <p className="text-[11px] text-center text-muted-foreground">
               Prix communiqué via WhatsApp · Paiement à la livraison possible
             </p>
 
@@ -122,8 +122,8 @@ export const ProductPage = () => {
                 { label: "Origine", value: "Confectionné à Abidjan" },
               ].map((d) => (
                 <div key={d.label} className="flex justify-between text-sm">
-                  <span className="text-charcoal-soft">{d.label}</span>
-                  <span className="text-charcoal">{d.value}</span>
+                  <span className="text-muted-foreground">{d.label}</span>
+                  <span className="text-foreground">{d.value}</span>
                 </div>
               ))}
             </div>
@@ -131,12 +131,12 @@ export const ProductPage = () => {
         </div>
 
         <div className="mt-24">
-          <p className="text-[10px] uppercase tracking-[0.3em] text-forest mb-3">Vous aimerez aussi</p>
-          <h2 className="font-serif text-3xl md:text-4xl text-charcoal mb-10">Pièces complémentaires</h2>
+          <p className="text-[10px] uppercase tracking-[0.3em] text-primary mb-3">Vous aimerez aussi</p>
+          <h2 className="font-serif text-3xl md:text-4xl text-foreground mb-10">Pièces complémentaires</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-5 md:gap-8">
-            {related.map((p, i) => (
+            {related.map((p) => (
               <Link key={p.id} to={`/produit/${p.id}`} className="block group">
-                <div className="aspect-[4/5] rounded-md overflow-hidden bg-cream-deep mb-3">
+                <div className="aspect-[4/5] rounded-md overflow-hidden bg-muted mb-3">
                   <img
                     src={p.image}
                     alt={p.name}
@@ -144,8 +144,8 @@ export const ProductPage = () => {
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
                   />
                 </div>
-                <h3 className="font-serif text-base text-charcoal">{p.name}</h3>
-                <p className="text-xs text-charcoal-soft mt-1">{p.colorName}</p>
+                <h3 className="font-serif text-base text-foreground">{p.name}</h3>
+                <p className="text-xs text-muted-foreground mt-1">{p.colorName}</p>
               </Link>
             ))}
           </div>

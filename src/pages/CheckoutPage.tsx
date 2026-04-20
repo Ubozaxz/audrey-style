@@ -31,8 +31,8 @@ export const CheckoutPage = () => {
   if (items.length === 0) {
     return (
       <div className="pt-32 pb-20 container text-center">
-        <p className="font-serif text-2xl text-charcoal mb-4">Votre sélection est vide.</p>
-        <Link to="/catalogue" className="text-xs uppercase tracking-[0.2em] text-forest border-b border-forest pb-1">
+        <p className="font-serif text-2xl text-foreground mb-4">Votre sélection est vide.</p>
+        <Link to="/catalogue" className="text-xs uppercase tracking-[0.2em] text-primary border-b border-primary pb-1">
           Retour au catalogue
         </Link>
       </div>
