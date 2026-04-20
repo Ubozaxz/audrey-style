@@ -3,8 +3,9 @@ import { motion } from "framer-motion";
 import { z } from "zod";
 import { useCart } from "@/store/cart";
 import { Link, useNavigate } from "react-router-dom";
-import { ArrowLeft, MessageCircle } from "lucide-react";
+import { ArrowLeft, MessageCircle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
+import { saveOrder } from "@/lib/orders";
 
 const WHATSAPP_NUMBER = "2250768426720";
 
@@ -25,6 +26,7 @@ export const CheckoutPage = () => {
   const navigate = useNavigate();
   const [form, setForm] = useState({ name: "", phone: "", location: "", note: "" });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [submitting, setSubmitting] = useState(false);
 
   if (items.length === 0) {
     return (
@@ -45,7 +47,7 @@ export const CheckoutPage = () => {
     return `Bonjour Audrey Style, je souhaite commander :\n\n${list}\n\nMon nom : ${form.name}\nTéléphone : ${form.phone}\nLivraison à : ${form.location}${note}`;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const result = checkoutSchema.safeParse(form);
     if (!result.success) {
@@ -58,6 +60,22 @@ export const CheckoutPage = () => {
       return;
     }
     setErrors({});
+    setSubmitting(true);
+
+    // Save order to backend (non-blocking for WhatsApp redirect)
+    try {
+      await saveOrder({
+        customer_name: form.name,
+        customer_phone: form.phone,
+        delivery_location: form.location,
+        items,
+        notes: form.note || undefined,
+      });
+    } catch (err) {
+      console.error("saveOrder failed:", err);
+      // continue anyway — WhatsApp must work
+    }
+
     const msg = encodeURIComponent(buildMessage());
     window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${msg}`, "_blank");
     toast.success("Redirection vers WhatsApp…", {
@@ -176,9 +194,14 @@ export const CheckoutPage = () => {
 
           <button
             type="submit"
-            className="w-full bg-forest text-primary-foreground py-5 rounded-full text-xs uppercase tracking-[0.25em] hover:bg-forest/90 transition-colors flex items-center justify-center gap-3 mt-10"
+            disabled={submitting}
+            className="w-full bg-primary text-primary-foreground py-5 rounded-full text-xs uppercase tracking-[0.25em] hover:bg-primary/90 transition-colors flex items-center justify-center gap-3 mt-10 disabled:opacity-70"
           >
-            <MessageCircle className="w-4 h-4" strokeWidth={1.5} />
+            {submitting ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : (
+              <MessageCircle className="w-4 h-4" strokeWidth={1.5} />
+            )}
             Finaliser sur WhatsApp
           </button>
           <p className="text-[11px] text-center text-charcoal-soft">
