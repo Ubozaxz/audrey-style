@@ -10,8 +10,8 @@ export const StoryPage = () => {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
         >
-          <p className="text-[10px] uppercase tracking-[0.3em] text-forest mb-3">Notre Histoire</p>
-          <h1 className="font-serif text-5xl md:text-6xl text-charcoal leading-tight mb-8">
+          <p className="text-[10px] uppercase tracking-[0.3em] text-primary mb-3">Notre Histoire</p>
+          <h1 className="font-serif text-5xl md:text-6xl text-foreground leading-tight mb-8">
             Un atelier né
             <br />
             <span className="italic">à Abidjan</span>.
@@ -31,9 +31,9 @@ export const StoryPage = () => {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.8, delay: 0.3 }}
-          className="prose prose-lg max-w-none text-charcoal-soft prose-headings:font-serif prose-headings:text-charcoal prose-headings:font-light"
+          className="prose prose-lg max-w-none text-muted-foreground prose-headings:font-serif prose-headings:text-foreground prose-headings:font-light dark:prose-invert"
         >
-          <p className="text-xl leading-relaxed text-charcoal/90">
+          <p className="text-xl leading-relaxed text-foreground/90">
             Audrey Style est née d'une conviction simple : le t-shirt parfait existe, et il se fait avec du temps, du coton honnête, et beaucoup d'attention.
           </p>
 
@@ -52,7 +52,7 @@ export const StoryPage = () => {
             Pas de prix gonflés, pas de marketing tape-à-l'œil. Le prix se communique sur WhatsApp, parce que la relation prime sur la vitrine. Vous achetez une pièce, vous gagnez aussi un atelier de confiance.
           </p>
 
-          <p className="italic text-forest mt-12 font-serif text-2xl text-center">
+          <p className="italic text-primary mt-12 font-serif text-2xl text-center">
             "L'élégance n'a pas besoin de crier."
           </p>
         </motion.div>

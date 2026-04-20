@@ -1,21 +1,27 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { Sparkles, X, Send, Loader2 } from "lucide-react";
+import { Sparkles, X, Send, Loader2, MessageCircle, ShoppingBag } from "lucide-react";
 import { useState, useRef, useEffect } from "react";
 import { toast } from "sonner";
+import { useCart } from "@/store/cart";
 
 type Msg = { role: "user" | "assistant"; content: string };
 
+const WHATSAPP_NUMBER = "2250768426720";
+
 const SUGGESTIONS = [
   "Quelle taille pour 1m70 / 65kg ?",
-  "Comment associer le Terre Cuite ?",
-  "C'est quoi un coton 220g/m² ?",
+  "Une tenue stylée pour le weekend ?",
+  "Tu me conseilles quelle couleur ?",
+  "Comment commander ?",
 ];
 
 export const StyleAssistant = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
+  const { items, open: openCart } = useCart();
   const [messages, setMessages] = useState<Msg[]>([
     {
       role: "assistant",
-      content: "Salut ✨ Moi c'est Awa, ta conseillère style chez Audrey. Dis-moi tout — taille, couleur, matière... je te guide.",
+      content:
+        "Salut ✨ Moi c'est Awa, ta conseillère style chez Audrey. Dis-moi tout — taille, couleur, occasion… je te trouve la pièce parfaite et on continue sur WhatsApp pour finaliser !",
     },
   ]);
   const [input, setInput] = useState("");
@@ -40,11 +46,6 @@ export const StyleAssistant = ({ open, onClose }: { open: boolean; onClose: () =
       assistantSoFar += chunk;
       setMessages((prev) => {
         const last = prev[prev.length - 1];
-        if (last?.role === "assistant" && last.content === "__streaming__") {
-          return prev.map((m, i) =>
-            i === prev.length - 1 ? { ...m, content: assistantSoFar } : m
-          );
-        }
         if (last?.role === "assistant" && prev[prev.length - 2]?.role === "user") {
           return prev.map((m, i) =>
             i === prev.length - 1 ? { ...m, content: assistantSoFar } : m
@@ -77,7 +78,6 @@ export const StyleAssistant = ({ open, onClose }: { open: boolean; onClose: () =
       const decoder = new TextDecoder();
       let buf = "";
       let done = false;
-      // seed an empty assistant message
       setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
 
       while (!done) {
@@ -110,6 +110,15 @@ export const StyleAssistant = ({ open, onClose }: { open: boolean; onClose: () =
     }
   };
 
+  const directWhatsApp = () => {
+    let msg = "Bonjour Audrey Style, je viens de discuter avec Awa sur le site et j'aimerais en savoir plus.";
+    if (items.length) {
+      const list = items.map((i) => `• ${i.name} (Taille ${i.size}, ${i.colorName}) × ${i.qty}`).join("\n");
+      msg = `Bonjour Audrey Style, je suis intéressée par :\n\n${list}`;
+    }
+    window.open(`https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`, "_blank");
+  };
+
   return (
     <AnimatePresence>
       {open && (
@@ -119,7 +128,7 @@ export const StyleAssistant = ({ open, onClose }: { open: boolean; onClose: () =
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             onClick={onClose}
-            className="fixed inset-0 z-50 bg-charcoal/30 backdrop-blur-sm sm:bg-transparent sm:backdrop-blur-0 sm:pointer-events-none"
+            className="fixed inset-0 z-50 bg-foreground/30 backdrop-blur-sm sm:bg-transparent sm:backdrop-blur-0 sm:pointer-events-none"
           />
           <motion.div
             initial={{ opacity: 0, y: 30, scale: 0.96 }}
@@ -134,13 +143,13 @@ export const StyleAssistant = ({ open, onClose }: { open: boolean; onClose: () =
                   <Sparkles className="w-4 h-4 text-primary-foreground" strokeWidth={1.5} />
                 </div>
                 <div>
-                  <p className="font-serif text-lg leading-none text-charcoal">Awa</p>
-                  <p className="text-[10px] uppercase tracking-[0.2em] text-forest mt-0.5">
-                    Conseillère Style
+                  <p className="font-serif text-lg leading-none text-foreground">Awa</p>
+                  <p className="text-[10px] uppercase tracking-[0.2em] text-primary mt-0.5">
+                    Conseillère Style · En ligne
                   </p>
                 </div>
               </div>
-              <button onClick={onClose} className="p-1.5 text-charcoal-soft hover:text-charcoal" aria-label="Fermer">
+              <button onClick={onClose} className="p-1.5 text-muted-foreground hover:text-foreground" aria-label="Fermer">
                 <X className="w-4 h-4" strokeWidth={1.5} />
               </button>
             </header>
@@ -156,8 +165,8 @@ export const StyleAssistant = ({ open, onClose }: { open: boolean; onClose: () =
                   <div
                     className={`max-w-[85%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed ${
                       m.role === "user"
-                        ? "bg-forest text-primary-foreground rounded-br-sm"
-                        : "bg-cream-deep text-charcoal rounded-bl-sm"
+                        ? "bg-primary text-primary-foreground rounded-br-sm"
+                        : "bg-muted text-foreground rounded-bl-sm"
                     }`}
                   >
                     {m.content || (loading && i === messages.length - 1 ? (
@@ -172,7 +181,7 @@ export const StyleAssistant = ({ open, onClose }: { open: boolean; onClose: () =
                     <button
                       key={s}
                       onClick={() => send(s)}
-                      className="block w-full text-left text-xs px-4 py-2.5 rounded-full border border-border hover:border-forest hover:text-forest transition-colors text-charcoal-soft"
+                      className="block w-full text-left text-xs px-4 py-2.5 rounded-full border border-border hover:border-primary hover:text-primary transition-colors text-muted-foreground"
                     >
                       {s}
                     </button>
@@ -181,21 +190,39 @@ export const StyleAssistant = ({ open, onClose }: { open: boolean; onClose: () =
               )}
             </div>
 
+            {/* Conversion CTAs */}
+            <div className="px-3 pt-2 pb-1 flex gap-2 border-t border-border/50">
+              <button
+                onClick={() => { onClose(); openCart(); }}
+                className="flex-1 inline-flex items-center justify-center gap-1.5 text-[11px] uppercase tracking-[0.15em] py-2.5 rounded-full bg-muted text-foreground hover:bg-primary hover:text-primary-foreground transition-colors"
+              >
+                <ShoppingBag className="w-3.5 h-3.5" strokeWidth={1.5} />
+                Ma sélection {items.length > 0 && `(${items.length})`}
+              </button>
+              <button
+                onClick={directWhatsApp}
+                className="flex-1 inline-flex items-center justify-center gap-1.5 text-[11px] uppercase tracking-[0.15em] py-2.5 rounded-full bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
+              >
+                <MessageCircle className="w-3.5 h-3.5" strokeWidth={1.5} />
+                WhatsApp
+              </button>
+            </div>
+
             <form
               onSubmit={(e) => { e.preventDefault(); send(); }}
-              className="p-3 border-t border-border/50 flex items-center gap-2"
+              className="p-3 flex items-center gap-2"
             >
               <input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 placeholder="Pose ta question style…"
-                className="flex-1 bg-cream-deep/60 px-4 py-3 rounded-full text-sm placeholder:text-charcoal-soft focus:outline-none focus:ring-2 focus:ring-forest/30"
+                className="flex-1 bg-muted px-4 py-3 rounded-full text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
                 disabled={loading}
               />
               <button
                 type="submit"
                 disabled={loading || !input.trim()}
-                className="w-11 h-11 flex items-center justify-center rounded-full bg-forest text-primary-foreground disabled:opacity-40 hover:bg-forest/90 transition"
+                className="w-11 h-11 flex items-center justify-center rounded-full bg-primary text-primary-foreground disabled:opacity-40 hover:bg-primary/90 transition"
                 aria-label="Envoyer"
               >
                 {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Send className="w-4 h-4" strokeWidth={1.5} />}
@@ -223,8 +250,8 @@ export const FloatingAIButton = ({ onClick, hidden }: { onClick: () => void; hid
       >
         <Sparkles className="w-5 h-5" strokeWidth={1.5} />
         <span className="absolute -top-2 -right-2 flex h-3 w-3">
-          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-forest-bright opacity-75" />
-          <span className="relative inline-flex rounded-full h-3 w-3 bg-forest-bright" />
+          <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75" />
+          <span className="relative inline-flex rounded-full h-3 w-3 bg-primary" />
         </span>
       </motion.button>
     )}
