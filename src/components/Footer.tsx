@@ -15,7 +15,7 @@ export const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
           <div>
             <div className="mb-4">
-              <Logo textClass="text-background" />
+              <Logo showText textClass="text-background" />
             </div>
             <p className="text-sm leading-relaxed text-background/60 max-w-xs">
               L'élégance du 100% Coton.
