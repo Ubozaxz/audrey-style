@@ -1,10 +1,12 @@
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, ShoppingBag, Sparkles, Sun, Moon, X, Lock } from "lucide-react";
+import { Menu, ShoppingBag, Sparkles, Sun, Moon, X, Lock, Download } from "lucide-react";
 import { useCart } from "@/store/cart";
 import { Link, useLocation } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useTheme } from "@/components/ThemeProvider";
 import { Logo } from "@/components/Logo";
+import { usePWAInstall } from "@/components/PWAInstallBanner";
+import { toast } from "sonner";
 
 export const Navigation = ({ onOpenAI }: { onOpenAI: () => void }) => {
   const { count, open } = useCart();
@@ -13,6 +15,21 @@ export const Navigation = ({ onOpenAI }: { onOpenAI: () => void }) => {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const { theme, toggle: toggleTheme } = useTheme();
+  const { canInstall, isIOS, installed, prompt: promptInstall } = usePWAInstall();
+
+  const handleInstall = async () => {
+    const r = await promptInstall();
+    if (r === "ios") {
+      toast("Installer sur iPhone", {
+        description: "Touche Partager (carré ↑) puis « Sur l'écran d'accueil ».",
+        duration: 6000,
+      });
+    } else if (r === "unsupported") {
+      toast("Installation non disponible", {
+        description: "Ouvre le site dans Chrome ou Safari sur mobile pour installer.",
+      });
+    }
+  };
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 8);
@@ -149,6 +166,15 @@ export const Navigation = ({ onOpenAI }: { onOpenAI: () => void }) => {
                   <Lock className="w-3.5 h-3.5" strokeWidth={1.5} />
                   Espace admin
                 </Link>
+                {!installed && (canInstall || isIOS) && (
+                  <button
+                    onClick={() => { setMenuOpen(false); handleInstall(); }}
+                    className="mt-3 mx-2 flex items-center justify-center gap-2 bg-primary text-primary-foreground py-3 rounded-full text-xs uppercase tracking-[0.2em]"
+                  >
+                    <Download className="w-4 h-4" strokeWidth={1.5} />
+                    Installer l'app
+                  </button>
+                )}
               </nav>
             </motion.div>
           </>
