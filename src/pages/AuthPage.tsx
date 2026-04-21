@@ -40,7 +40,7 @@ const AuthPage = () => {
       >
         <div className="glass-card rounded-3xl p-8 md:p-10 shadow-elegant">
           <div className="flex justify-center mb-6">
-            <Logo />
+            <Logo showText size="lg" />
           </div>
           <div className="text-center mb-8">
             <div className="inline-flex w-12 h-12 rounded-full bg-primary/10 items-center justify-center mb-4">
