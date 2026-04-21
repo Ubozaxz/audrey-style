@@ -2,11 +2,67 @@ import { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Download, X, Share, Plus } from "lucide-react";
 
-const DISMISSED_KEY = "audrey-pwa-dismissed";
+const DISMISSED_KEY = "sonon-pwa-dismissed";
 
 type BIPEvent = Event & {
   prompt: () => Promise<void>;
   userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
+};
+
+// Shared deferred prompt — captured once at app load so the manual
+// "Install" button (in the nav/footer) can trigger it later.
+let sharedDeferred: BIPEvent | null = null;
+const listeners = new Set<(e: BIPEvent | null) => void>();
+
+if (typeof window !== "undefined") {
+  window.addEventListener("beforeinstallprompt", (e) => {
+    e.preventDefault();
+    sharedDeferred = e as BIPEvent;
+    listeners.forEach((l) => l(sharedDeferred));
+  });
+  window.addEventListener("appinstalled", () => {
+    sharedDeferred = null;
+    listeners.forEach((l) => l(null));
+  });
+}
+
+export const isStandalone = () =>
+  typeof window !== "undefined" &&
+  (window.matchMedia?.("(display-mode: standalone)").matches ||
+    // @ts-ignore iOS
+    window.navigator.standalone === true);
+
+/** Hook for any component to trigger the install prompt manually. */
+export const usePWAInstall = () => {
+  const [deferred, setDeferred] = useState<BIPEvent | null>(sharedDeferred);
+  const [installed, setInstalled] = useState<boolean>(isStandalone());
+
+  useEffect(() => {
+    const handler = (e: BIPEvent | null) => setDeferred(e);
+    listeners.add(handler);
+    const onInstalled = () => setInstalled(true);
+    window.addEventListener("appinstalled", onInstalled);
+    return () => {
+      listeners.delete(handler);
+      window.removeEventListener("appinstalled", onInstalled);
+    };
+  }, []);
+
+  const ua = typeof navigator !== "undefined" ? navigator.userAgent.toLowerCase() : "";
+  const isIOS = /iphone|ipad|ipod/.test(ua) && !/crios|fxios/.test(ua);
+
+  const prompt = async (): Promise<"accepted" | "dismissed" | "ios" | "unsupported"> => {
+    if (deferred) {
+      await deferred.prompt();
+      const { outcome } = await deferred.userChoice;
+      if (outcome === "accepted") setDeferred(null);
+      return outcome;
+    }
+    if (isIOS) return "ios";
+    return "unsupported";
+  };
+
+  return { canInstall: !!deferred || isIOS, isIOS, installed, prompt };
 };
 
 export const PWAInstallBanner = () => {
@@ -21,11 +77,7 @@ export const PWAInstallBanner = () => {
     if (recentlyDismissed) return;
 
     // Already installed (standalone)
-    const standalone =
-      window.matchMedia?.("(display-mode: standalone)").matches ||
-      // @ts-ignore iOS
-      window.navigator.standalone === true;
-    if (standalone) return;
+    if (isStandalone()) return;
 
     const ua = navigator.userAgent.toLowerCase();
     const ios = /iphone|ipad|ipod/.test(ua) && !/crios|fxios/.test(ua);
@@ -38,13 +90,18 @@ export const PWAInstallBanner = () => {
       return;
     }
 
-    const onPrompt = (e: Event) => {
-      e.preventDefault();
-      setDeferred(e as BIPEvent);
+    if (sharedDeferred) {
+      setDeferred(sharedDeferred);
       setVisible(true);
+    }
+    const onShared = (e: BIPEvent | null) => {
+      setDeferred(e);
+      if (e) setVisible(true);
     };
-    window.addEventListener("beforeinstallprompt", onPrompt);
-    return () => window.removeEventListener("beforeinstallprompt", onPrompt);
+    listeners.add(onShared);
+    return () => {
+      listeners.delete(onShared);
+    };
   }, []);
 
   const dismiss = () => {
@@ -81,7 +138,7 @@ export const PWAInstallBanner = () => {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="font-serif text-base text-foreground leading-tight">
-                  Installer Audrey Style
+                  Installer SONON Shopping
                 </p>
                 <p className="text-[11px] text-muted-foreground mt-0.5">
                   Accès rapide depuis ton écran d'accueil
