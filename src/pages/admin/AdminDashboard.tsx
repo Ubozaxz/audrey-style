@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ShoppingBag, Truck, Clock, CheckCircle2, TrendingUp } from "lucide-react";
+import { ShoppingBag, Clock, CheckCircle2, TrendingUp, Package, Users, MessageCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Link } from "react-router-dom";
 
@@ -9,6 +9,9 @@ type Stats = {
   pending: number;
   delivered: number;
   today: number;
+  week: number;
+  pieces: number;
+  products: number;
   recent: any[];
 };
 
@@ -25,20 +28,25 @@ export const AdminDashboard = () => {
 
   useEffect(() => {
     const load = async () => {
-      const { data: orders } = await supabase
-        .from("orders")
-        .select("*")
-        .order("created_at", { ascending: false });
+      const [{ data: orders }, { count: productCount }] = await Promise.all([
+        supabase.from("orders").select("*").order("created_at", { ascending: false }),
+        supabase.from("products").select("*", { count: "exact", head: true }).eq("is_active", true),
+      ]);
 
       if (!orders) return;
       const today = new Date();
       today.setHours(0, 0, 0, 0);
+      const weekAgo = new Date();
+      weekAgo.setDate(weekAgo.getDate() - 7);
       setStats({
         total: orders.length,
         pending: orders.filter((o) => ["recue", "confirmee", "preparation"].includes(o.status)).length,
         delivered: orders.filter((o) => o.status === "livree").length,
         today: orders.filter((o) => new Date(o.created_at) >= today).length,
-        recent: orders.slice(0, 5),
+        week: orders.filter((o) => new Date(o.created_at) >= weekAgo).length,
+        pieces: orders.reduce((n, o) => n + (o.item_count ?? 0), 0),
+        products: productCount ?? 0,
+        recent: orders.slice(0, 6),
       });
     };
     load();
@@ -54,15 +62,17 @@ export const AdminDashboard = () => {
   }, []);
 
   const cards = [
-    { label: "Commandes totales", value: stats?.total ?? 0, icon: ShoppingBag, accent: "text-primary" },
-    { label: "Aujourd'hui", value: stats?.today ?? 0, icon: TrendingUp, accent: "text-primary" },
-    { label: "En cours", value: stats?.pending ?? 0, icon: Clock, accent: "text-foreground" },
-    { label: "Livrées", value: stats?.delivered ?? 0, icon: CheckCircle2, accent: "text-primary" },
+    { label: "Aujourd'hui", value: stats?.today ?? 0, icon: TrendingUp, accent: "text-primary", hint: "commandes" },
+    { label: "Cette semaine", value: stats?.week ?? 0, icon: ShoppingBag, accent: "text-primary", hint: "7 derniers jours" },
+    { label: "À traiter", value: stats?.pending ?? 0, icon: Clock, accent: "text-foreground", hint: "en cours" },
+    { label: "Livrées", value: stats?.delivered ?? 0, icon: CheckCircle2, accent: "text-primary", hint: "total" },
+    { label: "Pièces vendues", value: stats?.pieces ?? 0, icon: Package, accent: "text-foreground", hint: "toutes commandes" },
+    { label: "Catalogue actif", value: stats?.products ?? 0, icon: Users, accent: "text-foreground", hint: "articles" },
   ];
 
   return (
     <div className="space-y-8">
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 md:gap-4">
         {cards.map((c, i) => (
           <motion.div
             key={c.label}
@@ -76,6 +86,7 @@ export const AdminDashboard = () => {
               <c.icon className={`w-4 h-4 ${c.accent}`} strokeWidth={1.5} />
             </div>
             <p className="font-serif text-3xl text-foreground tabular-nums">{c.value}</p>
+            <p className="text-[10px] text-muted-foreground mt-1">{c.hint}</p>
           </motion.div>
         ))}
       </div>

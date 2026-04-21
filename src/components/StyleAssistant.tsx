@@ -9,10 +9,10 @@ type Msg = { role: "user" | "assistant"; content: string };
 const WHATSAPP_NUMBER = "2250768426720";
 
 const SUGGESTIONS = [
+  "Je cherche une pièce pour le bureau",
   "Quelle taille pour 1m70 / 65kg ?",
-  "Une tenue stylée pour le weekend ?",
-  "Tu me conseilles quelle couleur ?",
-  "Comment commander ?",
+  "Une couleur qui me va si j'ai le teint foncé ?",
+  "Comment se passe la livraison à Abidjan ?",
 ];
 
 export const StyleAssistant = ({ open, onClose }: { open: boolean; onClose: () => void }) => {
