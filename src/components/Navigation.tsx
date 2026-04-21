@@ -49,7 +49,7 @@ export const Navigation = ({ onOpenAI }: { onOpenAI: () => void }) => {
           </button>
 
           <div className="flex-1 md:flex-none flex justify-center md:justify-start">
-            <Logo />
+            <Logo showText />
           </div>
 
           <nav className="hidden md:flex items-center gap-10 absolute left-1/2 -translate-x-1/2">
