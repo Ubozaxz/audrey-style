@@ -50,6 +50,9 @@ const AuthPage = () => {
             <p className="text-sm text-muted-foreground mt-2">
               Accès réservé à Audrey & son équipe.
             </p>
+            <p className="text-[10px] uppercase tracking-[0.2em] text-primary/70 mt-3">
+              Identifiants test : 1234@gmail.com · 1234
+            </p>
           </div>
 
           <form onSubmit={onSubmit} className="space-y-5">
