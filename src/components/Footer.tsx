@@ -66,6 +66,11 @@ export const Footer = () => {
                 </a>
               </li>
               <li>
+                <a href="mailto:audreyyao429@gmail.com" className="hover:text-primary transition-colors break-all">
+                  audreyyao429@gmail.com
+                </a>
+              </li>
+              <li>
                 <Link to="/catalogue" className="hover:text-primary transition-colors">
                   Catalogue complet
                 </Link>
